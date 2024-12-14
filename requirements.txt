@@ -1,0 +1,5 @@
+# Specify the required Python version
+python_version == 3.11.5
+
+# Include the Long-Term Support version of NumPy
+numpy == 1.26.0

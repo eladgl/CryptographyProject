@@ -3,6 +3,14 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Ignore virtual environments
+.venv/
+venv/
+
+# Ignore shell configuration files
+.bashrc
+.zshrc
+
 # C extensions
 *.so
 
