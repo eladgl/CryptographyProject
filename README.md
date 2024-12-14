@@ -55,9 +55,9 @@ If for some reason you cannot execute PowerShell command(likely on an organizati
 
 | Variable | Value |
 | --------- | ------- |
-|PYENV   | C:\Users\my_pc\.pyenv\pyenv-win\ |
-|PYENV_HOME |	C:\Users\my_pc\.pyenv\pyenv-win\ |
-|PYENV_ROOT |	C:\Users\my_pc\.pyenv\pyenv-win\ |
+|PYENV   | C:\Users\my_pc\\.pyenv\pyenv-win\ |
+|PYENV_HOME |	C:\Users\my_pc\\.pyenv\pyenv-win\ |
+|PYENV_ROOT |	C:\Users\my_pc\\.pyenv\pyenv-win\ |
 
 And add two more lines to user variable Path both in user profile and in system and add them to the top of the file.
 
@@ -104,7 +104,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Notice foe windows users sometimes powershell blocks script activation, run:
+## Notice for windows users sometimes powershell blocks script activation, run:
 ```
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
