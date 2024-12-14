@@ -1,5 +1,24 @@
-# Specify the required Python version
+astroid==3.3.6
+colorama==0.4.6
+dill==0.3.9
+isort==5.13.2
+mccabe==0.7.0
+numpy==2.2.0
+platformdirs==4.3.6
+pylint==3.3.2
+tomlkit==0.13.2
 python_version == 3.11.5
-
-# Include the Long-Term Support version of NumPy
-numpy == 1.26.0
+numpy == 2.2.0
+astroid==3.3.6
+click==8.1.7
+colorama==0.4.6
+dill==0.3.9
+isort==5.13.2
+mccabe==0.7.0
+mypy-extensions==1.0.0
+numpy==2.2.0
+packaging==24.2
+pathspec==0.12.1
+platformdirs==4.3.6
+pylint==3.3.2
+tomlkit==0.13.2
