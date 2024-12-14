@@ -20,13 +20,16 @@ Secure email exchange: encr-decr with BLOWFISH in CFB mode+secure delivery of th
    ```
 
 ### 2. Install pyenv for Python version management:
-'''
+
+```
 pip install pyenv-win --target %USERPROFILE%\\.pyenv
-'''
+```
 If you run into an error with the above command use the folllowing instead (#303):
-'''
+
+```
 pip install pyenv-win --target %USERPROFILE%\\.pyenv --no-user --upgrade
-'''
+```
+
 See this for more information: https://github.com/pyenv-win/pyenv-win/blob/master/docs/installation.md#powershell
 ### 3. Configure Environment Variables:
 
