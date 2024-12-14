@@ -24,7 +24,7 @@ Secure email exchange: encr-decr with BLOWFISH in CFB mode+secure delivery of th
 ```
 pip install pyenv-win --target %USERPROFILE%\\.pyenv
 ```
-If you run into an error with the above command use the folllowing instead (#303):
+If you run into an error with the above command use the folllowing instead:
 
 ```
 pip install pyenv-win --target %USERPROFILE%\\.pyenv --no-user --upgrade
