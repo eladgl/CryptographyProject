@@ -80,6 +80,9 @@ def generate_key_pair(p, q):
         raise ValueError('Both numbers must be prime.')
     elif p == q:
         raise ValueError('p and q cannot be equal')
+    if p < 11 or q < 11:  # Ensure primes are large enough
+        raise ValueError('p and q must be larger primes for meaningful RSA operations.')
+    
     # n = pq
     n = p * q
 
