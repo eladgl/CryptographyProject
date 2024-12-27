@@ -1,7 +1,7 @@
 from src.core.crypto.blowfish import Blowfish
 
 def test_blowfish():
-    key = b"examplekey123456"  # Must be between 4 and 56 bytes
+    key = b"examplekey1234gfdgfdgfgdfg56"  # Must be between 4 and 56 bytes
     plaintext = b"TestData"    # Must be 8 bytes (64 bits)
 
     # Initialize Blowfish with the given key
