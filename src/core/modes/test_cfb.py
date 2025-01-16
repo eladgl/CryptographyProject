@@ -80,15 +80,15 @@ def test_cfb_wrong_key():
     )
     print("[test_cfb_wrong_key] Test passed (unexpected)!\n")
 
-if __name__ == "__main__":
-    # We'll run ALL tests in sequence.
-    # 1) Should PASS
-    test_cfb()
+# We'll run ALL tests in sequence.
+# 1) Should PASS
+test_cfb()
 
-    # 2) Should PASS if partial blocks are handled
-    test_cfb_partial_block()
+# 2) Should PASS if partial blocks are handled
+test_cfb_partial_block()
 
-    # 3) EXPECTED to FAIL
-    print("Running test_cfb_wrong_key (expected to FAIL)...")
-    test_cfb_wrong_key()
-    print("Finished running all tests.")
+# 3) EXPECTED to FAIL
+print("Running test_cfb_wrong_key (expected to FAIL)...")
+test_cfb_wrong_key()
+
+print("Finished running all tests.")
