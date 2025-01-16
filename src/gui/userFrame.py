@@ -3,10 +3,10 @@ import base64
 import tkinter as tk
 from tkinter import messagebox
 from ..core.modes.cfb import BlowfishCFB
-from .cipherManage import CipherManager
+from .cipherManager import CipherManager
 
 class UserFrame(tk.Frame):
-    def __init__(self, master, controller, bg_color, title, recipients):
+    def __init__(self, master, controller, bg_color, title, name, recipients):
         """
         Initialize a user frame with shared functionality.
 
@@ -14,18 +14,25 @@ class UserFrame(tk.Frame):
         :param controller: The main application controller (EncryptionApp).
         :param bg_color: Background color for the frame.
         :param title: Title of the frame (e.g., Alice or Bob).
+        :param name: Unique name for this frame in the shared state (e.g., "alice").
+        :param recipients: List of recipient names this user can send messages to.
         """
         super().__init__(master, padx=10, pady=10, bg=bg_color)
         self.master = master
         self.controller = controller
         self.title = title
+        self.name = name
         self.recipients = recipients
         self.selected_recipient = tk.StringVar(value=self.recipients[0])
         self.last_message = ""
         self.create_widgets()
         self.listen_for_messages()
 
+        # Cipher manager will be initialized upon the first encryption or decryption
         self.cipher_manager = None
+
+        # Initialize this user's message state
+        self.controller.shared_state[self.name] = None
 
     def initialize_cipher(self):
         """Initialize the CipherManager with the provided key."""
@@ -78,10 +85,9 @@ class UserFrame(tk.Frame):
 
             # Encrypt the message
             encrypted_message = self.cipher_manager.encrypt(message)
-
             # Send the message to the selected recipient
-            self.send_message(encrypted_message, self.selected_recipient)
-            messagebox.showinfo("Success", f"Message encrypted and sent to {self.selected_recipient}.")
+            self.send_message(encrypted_message, self.selected_recipient.get())
+            messagebox.showinfo("Success", f"Message encrypted and sent to {self.selected_recipient.get()}.")
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
@@ -93,34 +99,69 @@ class UserFrame(tk.Frame):
             return
 
         try:
-            if not self.cipher_manager:
-                self.initialize_cipher()
-
+            # Decode the Base64-encoded message
+            encrypted_message_bytes = base64.b64decode(encrypted_message)
+            print(encrypted_message_bytes)
+            
+            # Check if the cipher manager is initialized or if the key has changed
+            current_key = self.key_entry.get().encode()
+            print('Current key ', current_key)
+            if not self.cipher_manager or self.cipher_manager.key != current_key:
+                print("Key changed or cipher not initialized. Regenerating cipher...")
+                self.cipher_manager = CipherManager(current_key)
+            
             # Decrypt the message
-            decrypted_message = self.cipher_manager.decrypt(encrypted_message)
+            decrypted_message = self.cipher_manager.decrypt(encrypted_message_bytes)
 
             # Display the decrypted message
             messagebox.showinfo("Decrypted Message", f"Message: {decrypted_message.decode()}")
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", f"Decryption failed: {str(e)}")
 
-    def send_message(self, message):
-        """Send the encrypted message (to be implemented by subclasses)."""
-        raise NotImplementedError("Subclasses must implement this method.")
+    def send_message(self, message, recipient):
+        """
+        Send the encrypted message to the selected recipient.
+        :param message: The encrypted message (bytes).
+        :param recipient: The name of the recipient (str).
+        """
+        if recipient not in self.controller.shared_state:
+            raise ValueError(f"Recipient '{recipient}' does not exist.")
+        encoded_message = base64.b64encode(message).decode("utf-8")
+        self.controller.shared_state[recipient] = encoded_message
 
     def get_message(self):
-        """Get the message from the shared state (to be implemented by subclasses)."""
-        raise NotImplementedError("Subclasses must implement this method.")
+        """
+        Get the message intended for this user.
+        :return: The message (bytes) or None if no message is available.
+        """
+        return self.controller.shared_state.get(self.name)
+
+    def set_message(self, message):
+        """
+        Set the message for this user in the shared state.
+        :param message: The message to set (bytes).
+        """
+        self.controller.shared_state[self.name] = message
     
     def listen_for_messages(self):
         """Continuously listen for new messages."""
         new_message = self.get_message()  # Fetch the latest message from the shared state
 
         if new_message and new_message != self.last_message:
+            try:
+                # Decode the message (assuming it's Base64-encoded)
+                print('new message ', new_message)
+                decoded_message = base64.b64decode(new_message).decode("utf-8")
+                print('decoded_message ', decoded_message)
+            except Exception:
+                # If decoding fails, display the raw message
+                print('decode didnt work')
+                decoded_message = new_message
+
             self.last_message = new_message
             self.message_entry.delete(0, tk.END)  # Clear current text
-            self.message_entry.insert(0, new_message)  # Display new message
-            messagebox.showinfo("New Message", f"New message received: {new_message}")
+            self.message_entry.insert(0, decoded_message)  # Display decoded message
+            messagebox.showinfo("New Message", f"New message received: {decoded_message}")
 
         # Schedule this function to run again after 500 milliseconds
         self.after(500, self.listen_for_messages)

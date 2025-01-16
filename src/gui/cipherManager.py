@@ -21,18 +21,18 @@ class CipherManager:
         :return: The encrypted message (Base64-encoded string).
         """
         encrypted = self.cipher.encrypt(plaintext)
-        return base64.b64encode(encrypted).decode()
+        return encrypted
 
-    def decrypt(self, encrypted_base64):
+    def decrypt(self, encrypted_bytes):
         """
         Decrypt the encrypted message using Blowfish in CFB mode.
 
         :param encrypted_base64: The Base64-encoded encrypted message (string).
         :return: The decrypted plaintext (bytes).
         """
-        encrypted_bytes = base64.b64decode(encrypted_base64)
         return self.cipher.decrypt(encrypted_bytes)
 
     def reset_cipher(self):
         """Reinitialize the cipher (useful if the key or IV changes)."""
         self.cipher = BlowfishCFB(self.key, self.iv)
+

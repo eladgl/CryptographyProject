@@ -1,4 +1,4 @@
-from src.core.crypto.blowfish import Blowfish
+from ..crypto.blowfish import Blowfish
 
 BLOCK_SIZE = 8  # Blowfish block size is 8 bytes (64 bits)
 
