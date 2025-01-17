@@ -9,6 +9,7 @@ ECElGamal
     A class that handles EC ElGamal signature generation and verification.
 """
 
+import hashlib
 
 class ECElGamal:
     def __init__(self, a, b, n):
@@ -43,16 +44,29 @@ class ECElGamal:
             raise ValueError(f"Private key (d={d}) must be less than the order of the curve (n={self.n}).")
         return (d * bx) % self.n, (d * by) % self.n
 
+    def hash_message(self, message):
+        """Hash the message to ensure consistent encoding."""
+        if isinstance(message, int):
+            message = message.to_bytes((message.bit_length() + 7) // 8, byteorder="big")
+        hashed = int(hashlib.sha256(message).hexdigest(), 16)
+        return hashed % self.n
+
     def encrypt_message(self, bx, by, Qx, Qy, k, M):
         if k >= self.n:
             raise ValueError(f"Random number (k={k}) must be less than the order of the curve (n={self.n}).")
+
+        # Hash the message before signing
+        M_hashed = self.hash_message(M)
+
         C1x = (k * bx) % self.n
         C1y = (k * by) % self.n
-        C2x = (k * Qx + M) % self.n
-        C2y = (k * Qy + M) % self.n
+        C2x = (k * Qx + M_hashed) % self.n
+        C2y = (k * Qy + M_hashed) % self.n
         return (C1x, C1y), (C2x, C2y)
 
     def decrypt_message(self, C1x, C1y, C2x, C2y, d):
         Mx = (C2x - d * C1x) % self.n
         My = (C2y - d * C1y) % self.n
-        return Mx, My
+        if Mx != My:
+            raise ValueError("Decryption failed: Mx and My do not match.")
+        return Mx
