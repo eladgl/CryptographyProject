@@ -7,12 +7,18 @@ from src.core.signature.ec_elgamal import ECElGamal
 from src.gui.app import EncryptionApp
 import tkinter as tk
 import random
-
+from src.gui.test_communication import TestCommunicationWorkflow
+import unittest
 # Run the tests
 def main():
     root = tk.Tk()  # Create the main application window
     app = EncryptionApp(root)  # Initialize the EncryptionApp
     root.mainloop()  # Start the Tkinter event loop
+    
+    # Run all tests in TestCommunicationWorkflow
+    #suite = unittest.TestLoader().loadTestsFromTestCase(TestCommunicationWorkflow)
+    #unittest.TextTestRunner(verbosity=2).run(suite)
+
     # #step 1: Generate RSA keys
     # #step 1.1: Generate large prime numbers
     # print("Generating large RSA keys...")
