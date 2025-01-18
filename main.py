@@ -7,8 +7,6 @@ from src.core.signature.ec_elgamal import ECElGamal
 from src.gui.app import EncryptionApp
 import tkinter as tk
 import random
-from src.gui.test_communication import TestCommunicationWorkflow
-import unittest
 # Run the tests
 def main():
     root = tk.Tk()  # Create the main application window
