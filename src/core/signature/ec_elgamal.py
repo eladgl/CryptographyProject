@@ -8,7 +8,7 @@ Classes
 ECElGamal
     A class that handles EC ElGamal signature generation and verification.
 """
-
+import hashlib
 
 class ECElGamal:
     def __init__(self, a, b, n):
@@ -34,9 +34,10 @@ class ECElGamal:
 
     @staticmethod
     def generate_base_point(arr_x, arr_y):
-        if not arr_x or not arr_y:
-            raise ValueError("No valid points on the curve")
-        return arr_x[0], arr_y[0]
+        strong_points = [p for p in zip(arr_x, arr_y) if p[0] > 2 and p[1] > 2]
+        if not strong_points:
+            raise ValueError("No strong points available.")
+        return strong_points[0]  # Or pick randomly
 
     def generate_public_key(self, bx, by, d):
         if d >= self.n:
@@ -55,4 +56,34 @@ class ECElGamal:
     def decrypt_message(self, C1x, C1y, C2x, C2y, d):
         Mx = (C2x - d * C1x) % self.n
         My = (C2y - d * C1y) % self.n
+
+        # Ensure Mx and My are within the valid message space
+        if Mx < 0 or My < 0:
+            raise ValueError(f"Decrypted message values out of bounds: Mx={Mx}, My={My}")
+
         return Mx, My
+
+
+    def generate_ec_private_key(ec, seed=None):
+            """
+            Generate a private key for EC ElGamal (must be in the range [1, n-1]).
+
+            :param ec: An instance of the ECElGamal class containing the curve's parameters.
+            :param seed: Optional seed value for deterministic key generation (useful for testing).
+            :return: A private key as an integer.
+            """
+            if not isinstance(ec, ECElGamal):
+                raise ValueError("The 'ec' parameter must be an instance of ECElGamal.")
+            
+            n = ec.n  # Extract the order of the curve
+            if seed is None:
+                seed = "default_seed"  # Default seed if none is provided
+
+            # Hash the seed to create a deterministic random value
+            seed_hash = hashlib.sha256(str(seed).encode()).hexdigest()
+            private_key = (int(seed_hash, 16) % (n - 1)) + 1
+
+            if private_key <= 0 or private_key >= n:
+                raise ValueError("Generated private key is out of range. Adjust your logic.")
+
+            return private_key
