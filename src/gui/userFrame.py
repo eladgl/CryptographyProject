@@ -183,13 +183,13 @@ class UserFrame(tk.Frame):
                 scrambled_plaintext = plaintext
             except (UnicodeDecodeError, ValueError):
                 # If decryption fails, show scrambled data instead
-                scrambled_plaintext = ''.join(chr(byte) for byte in ciphertext[:20])  # Show partial scrambled output
-
+                plaintext = self.cipher_manager.decrypt(ciphertext)
+                scrambled_plaintext = plaintext
             # Step 7: Show the (potentially scrambled) message
             messagebox.showinfo("Decrypted Message", f"Message: {scrambled_plaintext}")
 
         except Exception as e:
-            messagebox.showerror("Error", f"Decryption failed.")
+            plaintext = self.cipher_manager.decrypt(ciphertext)
 
     def send_public_key(self):
         """Send this user's RSA public key to the shared state."""
